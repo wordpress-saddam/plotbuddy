@@ -76,7 +76,14 @@ export default function RegistrationForm({ onFormDataChange, onImageChange }: Re
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (step === 3 && images && images.length === 0) {
+    
+    // If user presses Enter while not on the final step, just go to the next step
+    if (step !== 3) {
+      nextStep();
+      return;
+    }
+
+    if (step === 3 && (!images || images.length === 0)) {
       setError("Please upload at least one image.");
       return;
     }
@@ -96,11 +103,7 @@ export default function RegistrationForm({ onFormDataChange, onImageChange }: Re
     }
 
     try {
-      const response = await axios.post('http://localhost:5001/api/lands/register', submitData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      const response = await axios.post('http://localhost:5001/api/lands/register', submitData);
       
       if (response.data.success) {
         setSuccess(true);
