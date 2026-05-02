@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import PlotsList from './pages/PlotsList';
 import PlotDetail from './pages/PlotDetail';
 import RegisterPlot from './pages/RegisterPlot';
+import MyPlots from './pages/MyPlots';
 import { Map, MapPin, LogOut, Loader2 } from 'lucide-react';
 import { useAuth } from './context/AuthContext';
 import { GoogleLogin } from '@react-oauth/google';
@@ -52,6 +53,11 @@ function App() {
             <Link to="/register-plot" className="text-sm font-bold text-stone-600 hover:text-primary transition-colors">
               List Your Plot
             </Link>
+            {user && (
+              <Link to="/my-plots" className="text-sm font-bold text-emerald-600 hover:text-emerald-700 transition-colors">
+                My Plots
+              </Link>
+            )}
           </nav>
 
           <div className="flex items-center space-x-4">
@@ -104,6 +110,7 @@ function App() {
           <Route path="/plots" element={<PlotsList />} />
           <Route path="/plots/:id" element={<PlotDetail />} />
           <Route path="/register-plot" element={<RegisterPlot />} />
+          <Route path="/my-plots" element={<MyPlots />} />
         </Routes>
       </main>
 

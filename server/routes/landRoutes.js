@@ -74,7 +74,8 @@ router.get('/', async (req, res) => {
     const { minArea, maxRent, fencing, water, electricity, limit } = req.query;
     
     // Build query object
-    let query = {};
+    // Exclude booked plots
+    let query = { isBooked: { $ne: true } };
     
     if (minArea) query.area = { $gte: parseFloat(minArea) };
     if (maxRent) query.monthlyRent = { $lte: parseFloat(maxRent) };
@@ -102,6 +103,24 @@ router.get('/', async (req, res) => {
   }
 });
 
+// @route   GET /api/lands/my-plots
+// @desc    Get plots listed by the logged-in user
+// @access  Private
+router.get('/my-plots', protect, async (req, res) => {
+  try {
+    const lands = await Land.find({ owner: req.user.id }).sort({ createdAt: -1 });
+    
+    res.status(200).json({
+      success: true,
+      count: lands.length,
+      data: lands
+    });
+  } catch (error) {
+    console.error('Error fetching my plots:', error);
+    res.status(500).json({ success: false, message: 'Server Error. Please try again.' });
+  }
+});
+
 // @route   GET /api/lands/:id
 // @desc    Get a single plot by ID
 // @access  Public
@@ -122,6 +141,38 @@ router.get('/:id', async (req, res) => {
     if (error.kind === 'ObjectId') {
       return res.status(404).json({ success: false, message: 'Plot not found' });
     }
+    res.status(500).json({ success: false, message: 'Server Error. Please try again.' });
+  }
+});
+
+
+
+// @route   PUT /api/lands/:id/toggle-booked
+// @desc    Toggle the booked status of a plot
+// @access  Private
+router.put('/:id/toggle-booked', protect, async (req, res) => {
+  try {
+    const land = await Land.findById(req.params.id);
+    
+    if (!land) {
+      return res.status(404).json({ success: false, message: 'Plot not found' });
+    }
+    
+    // Make sure user owns the plot
+    if (land.owner.toString() !== req.user.id) {
+      return res.status(403).json({ success: false, message: 'Not authorized to update this plot' });
+    }
+    
+    land.isBooked = !land.isBooked;
+    await land.save();
+    
+    res.status(200).json({
+      success: true,
+      data: land,
+      message: land.isBooked ? 'Plot marked as booked' : 'Plot marked as available'
+    });
+  } catch (error) {
+    console.error('Error toggling booked status:', error);
     res.status(500).json({ success: false, message: 'Server Error. Please try again.' });
   }
 });

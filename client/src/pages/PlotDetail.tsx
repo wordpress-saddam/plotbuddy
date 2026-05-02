@@ -101,8 +101,15 @@ export default function PlotDetail() {
                     Coordinates: {plot.location?.coordinates[1]}, {plot.location?.coordinates[0]}
                   </div>
                 </div>
-                <div className="bg-green-50 text-green-700 px-4 py-2 rounded-xl flex items-center font-bold shrink-0 self-start">
-                  <CheckCircle2 className="w-5 h-5 mr-2" /> Verified Plot
+                <div className="flex flex-col gap-2 shrink-0 self-start">
+                  <div className="bg-green-50 text-green-700 px-4 py-2 rounded-xl flex items-center font-bold">
+                    <CheckCircle2 className="w-5 h-5 mr-2" /> Verified Plot
+                  </div>
+                  {plot.isBooked && (
+                    <div className="bg-stone-100 text-stone-700 px-4 py-2 rounded-xl flex items-center font-bold border border-stone-300">
+                      <CheckCircle2 className="w-5 h-5 mr-2 text-stone-500" /> Currently Booked
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -173,8 +180,15 @@ export default function PlotDetail() {
                 </li>
               </ul>
 
-              <button className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 rounded-2xl transition-colors shadow-lg shadow-primary/30 flex items-center justify-center">
-                Contact Owner Now
+              <button 
+                disabled={plot.isBooked}
+                className={`w-full font-bold py-4 rounded-2xl transition-colors shadow-lg flex items-center justify-center ${
+                  plot.isBooked 
+                    ? 'bg-stone-200 text-stone-400 cursor-not-allowed shadow-none' 
+                    : 'bg-primary hover:bg-primary-dark text-white shadow-primary/30'
+                }`}
+              >
+                {plot.isBooked ? 'Plot is Booked' : 'Contact Owner Now'}
               </button>
               
               <p className="text-xs text-center text-stone-400 mt-4">
