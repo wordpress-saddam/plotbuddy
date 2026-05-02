@@ -3,11 +3,34 @@ import { Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import PlotsList from './pages/PlotsList';
 import PlotDetail from './pages/PlotDetail';
-import { Map, MapPin, LogOut } from 'lucide-react';
+import RegisterPlot from './pages/RegisterPlot';
+import { Map, MapPin, LogOut, Loader2 } from 'lucide-react';
 import { useAuth } from './context/AuthContext';
+import { GoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
+import { useState } from 'react';
 
 function App() {
-  const { user, logout } = useAuth();
+  const { user, login, logout } = useAuth();
+  const [loading, setLoading] = useState(false);
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    setLoading(true);
+    try {
+      const response = await axios.post('http://localhost:5001/api/auth/google', {
+        token: credentialResponse.credential
+      });
+
+      if (response.data.success) {
+        login(response.data.user, response.data.token);
+      }
+    } catch (err: any) {
+      console.error('Login failed:', err);
+      alert('Authentication failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="min-h-screen bg-stone-50 font-sans selection:bg-primary/20 selection:text-primary-dark">
       {/* Header */}
@@ -26,7 +49,7 @@ function App() {
             <Link to="/plots" className="text-sm font-bold text-stone-600 hover:text-primary transition-colors">
               Browse Plots
             </Link>
-            <Link to="/" className="text-sm font-bold text-stone-600 hover:text-primary transition-colors">
+            <Link to="/register-plot" className="text-sm font-bold text-stone-600 hover:text-primary transition-colors">
               List Your Plot
             </Link>
           </nav>
@@ -36,7 +59,7 @@ function App() {
               <MapPin className="w-4 h-4 mr-1.5" /> Delhi NCR
             </div>
             
-            {user && (
+            {user ? (
               <div className="flex items-center space-x-3 border-l border-stone-200 pl-4">
                 {user.profilePicture ? (
                   <img src={user.profilePicture} alt={user.name} className="w-8 h-8 rounded-full border border-stone-200" />
@@ -53,6 +76,22 @@ function App() {
                   <LogOut className="w-5 h-5" />
                 </button>
               </div>
+            ) : (
+              <div className="flex items-center border-l border-stone-200 pl-4">
+                {loading ? (
+                  <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                ) : (
+                  <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => console.error('Login failed')}
+                    type="standard"
+                    theme="outline"
+                    size="medium"
+                    text="signin_with"
+                    shape="pill"
+                  />
+                )}
+              </div>
             )}
           </div>
         </div>
@@ -64,6 +103,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/plots" element={<PlotsList />} />
           <Route path="/plots/:id" element={<PlotDetail />} />
+          <Route path="/register-plot" element={<RegisterPlot />} />
         </Routes>
       </main>
 

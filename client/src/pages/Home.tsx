@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import RegistrationForm from '../components/RegistrationForm';
 import PreviewCard from '../components/PreviewCard';
-import Login from '../components/Login';
 import { useAuth } from '../context/AuthContext';
 import { MapPin, IndianRupee, Move, ArrowRight, Loader2 } from 'lucide-react';
 
@@ -49,21 +48,24 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Registration Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 pb-20 relative z-20 border-b border-stone-200">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div className="lg:col-span-7 xl:col-span-8">
-            {isAuthenticated ? (
-              <RegistrationForm 
-                onFormDataChange={setFormData} 
-                onImageChange={setImages} 
-              />
-            ) : (
-              <Login />
-            )}
-          </div>
-          <div className="lg:col-span-5 xl:col-span-4 hidden lg:block">
-            <PreviewCard data={formData} images={images} />
+      {/* CTA Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 pb-20 relative z-20 border-b border-stone-200 flex justify-center">
+        <div className="bg-white p-8 rounded-3xl shadow-xl border border-stone-200 w-full max-w-3xl text-center flex flex-col items-center">
+          <h2 className="text-2xl font-bold text-stone-800 mb-6">Ready to get started?</h2>
+          <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
+            <Link 
+              to="/plots" 
+              className="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-primary/30 flex justify-center items-center group"
+            >
+              Browse Available Plots
+              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link 
+              to="/register-plot" 
+              className="bg-stone-100 hover:bg-stone-200 text-stone-900 border border-stone-200 px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-sm flex justify-center items-center"
+            >
+              List Your Plot
+            </Link>
           </div>
         </div>
       </section>
