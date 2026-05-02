@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { MapPin, Image as ImageIcon, Home, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 interface RegistrationFormProps {
   onFormDataChange: (data: any) => void;
@@ -8,6 +9,7 @@ interface RegistrationFormProps {
 }
 
 export default function RegistrationForm({ onFormDataChange, onImageChange }: RegistrationFormProps) {
+  const { token } = useAuth();
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -103,7 +105,11 @@ export default function RegistrationForm({ onFormDataChange, onImageChange }: Re
     }
 
     try {
-      const response = await axios.post('http://localhost:5001/api/lands/register', submitData);
+      const response = await axios.post('http://localhost:5001/api/lands/register', submitData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       
       if (response.data.success) {
         setSuccess(true);

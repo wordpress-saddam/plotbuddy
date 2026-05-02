@@ -33,8 +33,15 @@ const LandSchema = new mongoose.Schema({
   images: {
     type: [String],
     default: []
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   }
-}, { timestamps: true });
+}, {
+  timestamps: true
+});
 
 // Create a geospatial index on location
 LandSchema.index({ location: '2dsphere' });

@@ -3,9 +3,11 @@ import { Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import PlotsList from './pages/PlotsList';
 import PlotDetail from './pages/PlotDetail';
-import { Map, MapPin } from 'lucide-react';
+import { Map, MapPin, LogOut } from 'lucide-react';
+import { useAuth } from './context/AuthContext';
 
 function App() {
+  const { user, logout } = useAuth();
   return (
     <div className="min-h-screen bg-stone-50 font-sans selection:bg-primary/20 selection:text-primary-dark">
       {/* Header */}
@@ -29,10 +31,29 @@ function App() {
             </Link>
           </nav>
 
-          <div className="flex items-center">
+          <div className="flex items-center space-x-4">
             <div className="hidden sm:flex items-center text-sm font-bold text-emerald-700 bg-emerald-50 px-4 py-2 rounded-full border border-emerald-100">
               <MapPin className="w-4 h-4 mr-1.5" /> Delhi NCR
             </div>
+            
+            {user && (
+              <div className="flex items-center space-x-3 border-l border-stone-200 pl-4">
+                {user.profilePicture ? (
+                  <img src={user.profilePicture} alt={user.name} className="w-8 h-8 rounded-full border border-stone-200" />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">
+                    {user.name.charAt(0)}
+                  </div>
+                )}
+                <button 
+                  onClick={logout}
+                  className="text-stone-500 hover:text-red-500 transition-colors p-1"
+                  title="Logout"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </header>

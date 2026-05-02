@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Land = require('../models/Land');
 const { upload } = require('../config/cloudinary');
+const { protect } = require('../middleware/authMiddleware');
 
 // Delhi NCR Bounding Box validation
 const isWithinDelhiNCR = (lat, lng) => {
@@ -14,8 +15,8 @@ const isWithinDelhiNCR = (lat, lng) => {
 
 // @route   POST /api/lands/register
 // @desc    Register a new land plot
-// @access  Public
-router.post('/register', upload.array('images', 5), async (req, res) => {
+// @access  Private
+router.post('/register', protect, upload.array('images', 5), async (req, res) => {
   try {
     const { title, area, lat, lng, fencing, water, electricity, monthlyRent } = req.body;
 
@@ -48,7 +49,8 @@ router.post('/register', upload.array('images', 5), async (req, res) => {
         electricity: electricity === 'true' || electricity === true,
       },
       monthlyRent: parseFloat(monthlyRent),
-      images: imageUrls
+      images: imageUrls,
+      owner: req.user.id // Associate the land with the logged-in user
     });
 
     await newLand.save();
