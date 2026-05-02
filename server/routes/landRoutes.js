@@ -177,4 +177,78 @@ router.put('/:id/toggle-booked', protect, async (req, res) => {
   }
 });
 
+// @route   PUT /api/lands/:id
+// @desc    Update a plot
+// @access  Private
+router.put('/:id', protect, upload.array('images', 5), async (req, res) => {
+  try {
+    const { title, area, lat, lng, fencing, water, electricity, monthlyRent } = req.body;
+    let land = await Land.findById(req.params.id);
+
+    if (!land) {
+      return res.status(404).json({ success: false, message: 'Plot not found' });
+    }
+
+    if (land.owner.toString() !== req.user.id) {
+      return res.status(403).json({ success: false, message: 'Not authorized to update this plot' });
+    }
+
+    // Validate coordinates
+    const latitude = parseFloat(lat);
+    const longitude = parseFloat(lng);
+    
+    if (isNaN(latitude) || isNaN(longitude)) {
+      return res.status(400).json({ success: false, message: 'Invalid coordinates provided.' });
+    }
+
+    if (!isWithinDelhiNCR(latitude, longitude)) {
+      return res.status(400).json({ success: false, message: 'Plot location must be within Delhi NCR.' });
+    }
+
+    const imageUrls = req.files && req.files.length > 0 ? req.files.map(file => file.path) : land.images;
+
+    land.title = title;
+    land.area = parseFloat(area);
+    land.location.coordinates = [longitude, latitude];
+    land.amenities = {
+      fencing: fencing === 'true' || fencing === true,
+      water: water === 'true' || water === true,
+      electricity: electricity === 'true' || electricity === true,
+    };
+    land.monthlyRent = parseFloat(monthlyRent);
+    land.images = imageUrls;
+
+    await land.save();
+
+    res.status(200).json({ success: true, data: land });
+  } catch (error) {
+    console.error('Error updating plot:', error);
+    res.status(500).json({ success: false, message: 'Server Error. Please try again.' });
+  }
+});
+
+// @route   DELETE /api/lands/:id
+// @desc    Delete a plot
+// @access  Private
+router.delete('/:id', protect, async (req, res) => {
+  try {
+    const land = await Land.findById(req.params.id);
+
+    if (!land) {
+      return res.status(404).json({ success: false, message: 'Plot not found' });
+    }
+
+    if (land.owner.toString() !== req.user.id) {
+      return res.status(403).json({ success: false, message: 'Not authorized to delete this plot' });
+    }
+
+    await land.deleteOne();
+
+    res.status(200).json({ success: true, message: 'Plot deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting plot:', error);
+    res.status(500).json({ success: false, message: 'Server Error. Please try again.' });
+  }
+});
+
 module.exports = router;

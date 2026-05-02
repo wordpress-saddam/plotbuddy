@@ -50,7 +50,7 @@ export default function PlotsList() {
       <div className="flex flex-col md:flex-row gap-8 items-start">
         
         {/* Sidebar Filters */}
-        <div className="w-full md:w-64 shrink-0 bg-white p-6 rounded-2xl shadow-sm border border-stone-200 sticky top-28">
+        <div className="w-full md:w-64 shrink-0 bg-white p-6 rounded-2xl shadow-sm border border-stone-200 md:sticky md:top-28">
           <div className="flex items-center mb-6 text-stone-900 font-bold text-lg">
             <Filter className="w-5 h-5 mr-2 text-primary" /> Filters
           </div>

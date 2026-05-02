@@ -4,10 +4,12 @@ import Home from './pages/Home';
 import PlotsList from './pages/PlotsList';
 import PlotDetail from './pages/PlotDetail';
 import RegisterPlot from './pages/RegisterPlot';
+import EditPlot from './pages/EditPlot';
 import MyPlots from './pages/MyPlots';
 import Profile from './pages/Profile';
 import Favorites from './pages/Favorites';
-import { Map, MapPin, LogOut, Loader2, Heart, User } from 'lucide-react';
+import Auth from './pages/Auth';
+import { Map, MapPin, LogOut, Loader2, Heart, User, PlusCircle } from 'lucide-react';
 import { useAuth } from './context/AuthContext';
 import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
@@ -16,24 +18,6 @@ import { useState } from 'react';
 function App() {
   const { user, login, logout } = useAuth();
   const [loading, setLoading] = useState(false);
-
-  const handleGoogleSuccess = async (credentialResponse: any) => {
-    setLoading(true);
-    try {
-      const response = await axios.post('http://localhost:5001/api/auth/google', {
-        token: credentialResponse.credential
-      });
-
-      if (response.data.success) {
-        login(response.data.user, response.data.token);
-      }
-    } catch (err: any) {
-      console.error('Login failed:', err);
-      alert('Authentication failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
   return (
     <div className="min-h-screen bg-stone-50 font-sans selection:bg-primary/20 selection:text-primary-dark">
       {/* Header */}
@@ -101,6 +85,9 @@ function App() {
                       <Link to="/my-plots" className="flex items-center px-4 py-2.5 text-sm font-medium text-stone-700 hover:bg-stone-50 hover:text-primary transition-colors">
                         <Map className="w-4 h-4 mr-3 text-stone-400" /> Registered Plots
                       </Link>
+                      <Link to="/register-plot" className="flex items-center px-4 py-2.5 text-sm font-medium text-stone-700 hover:bg-stone-50 hover:text-primary transition-colors">
+                        <PlusCircle className="w-4 h-4 mr-3 text-stone-400" /> Register New Plot
+                      </Link>
                     </div>
                     <div className="py-2 border-t border-stone-100">
                       <button 
@@ -115,19 +102,9 @@ function App() {
               </div>
             ) : (
               <div className="flex items-center border-l border-stone-200 pl-4">
-                {loading ? (
-                  <Loader2 className="w-5 h-5 text-primary animate-spin" />
-                ) : (
-                  <GoogleLogin
-                    onSuccess={handleGoogleSuccess}
-                    onError={() => console.error('Login failed')}
-                    type="standard"
-                    theme="outline"
-                    size="medium"
-                    text="signin_with"
-                    shape="pill"
-                  />
-                )}
+                <Link to="/login" className="bg-stone-900 hover:bg-black text-white px-5 py-2 rounded-xl font-bold text-sm transition-all shadow-sm">
+                  Sign In
+                </Link>
               </div>
             )}
           </div>
@@ -141,9 +118,11 @@ function App() {
           <Route path="/plots" element={<PlotsList />} />
           <Route path="/plots/:id" element={<PlotDetail />} />
           <Route path="/register-plot" element={<RegisterPlot />} />
+          <Route path="/edit-plot/:id" element={<EditPlot />} />
           <Route path="/my-plots" element={<MyPlots />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/favorites" element={<Favorites />} />
+          <Route path="/login" element={<Auth />} />
         </Routes>
       </main>
 

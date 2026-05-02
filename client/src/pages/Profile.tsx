@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { User, Phone, MapPin, AlignLeft, Loader2, Save, CheckCircle2 } from 'lucide-react';
+import { User, Phone, MapPin, AlignLeft, Loader2, Save, CheckCircle2, Camera } from 'lucide-react';
 
 export default function Profile() {
   const { user, token, updateUser, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [photoLoading, setPhotoLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
+    name: '',
     phone: '',
     address: '',
     bio: ''
@@ -16,6 +19,7 @@ export default function Profile() {
   useEffect(() => {
     if (user) {
       setFormData({
+        name: user.name || '',
         phone: user.phone || '',
         address: user.address || '',
         bio: user.bio || ''
@@ -50,6 +54,34 @@ export default function Profile() {
     }
   };
 
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const uploadData = new FormData();
+    uploadData.append('profilePicture', file);
+
+    setPhotoLoading(true);
+    try {
+      const response = await axios.post('http://localhost:5001/api/users/profile-photo', uploadData, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      if (response.data.success) {
+        updateUser({ profilePicture: response.data.profilePicture });
+      }
+    } catch (error) {
+      console.error('Failed to upload photo:', error);
+      alert('Failed to upload profile photo.');
+    } finally {
+      setPhotoLoading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
   if (!isAuthenticated || !user) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center p-4">
@@ -71,13 +103,33 @@ export default function Profile() {
       <div className="bg-white rounded-3xl shadow-sm border border-stone-200 overflow-hidden">
         {/* Profile Header */}
         <div className="bg-stone-50 border-b border-stone-200 p-8 flex items-center gap-6">
-          {user.profilePicture ? (
-            <img src={user.profilePicture} alt={user.name} className="w-24 h-24 rounded-full border-4 border-white shadow-md object-cover" />
-          ) : (
-            <div className="w-24 h-24 rounded-full bg-primary text-white flex items-center justify-center font-bold text-4xl shadow-md border-4 border-white">
-              {user.name.charAt(0)}
-            </div>
-          )}
+          <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              className="hidden" 
+              accept="image/*" 
+              onChange={handlePhotoUpload} 
+            />
+            {photoLoading ? (
+              <div className="w-24 h-24 rounded-full bg-stone-200 flex items-center justify-center border-4 border-white shadow-md">
+                <Loader2 className="w-8 h-8 animate-spin text-stone-400" />
+              </div>
+            ) : user.profilePicture ? (
+              <img src={user.profilePicture} alt={user.name} className="w-24 h-24 rounded-full border-4 border-white shadow-md object-cover" />
+            ) : (
+              <div className="w-24 h-24 rounded-full bg-primary text-white flex items-center justify-center font-bold text-4xl shadow-md border-4 border-white">
+                {user.name.charAt(0)}
+              </div>
+            )}
+            
+            {/* Hover overlay */}
+            {!photoLoading && (
+              <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <Camera className="w-6 h-6 text-white" />
+              </div>
+            )}
+          </div>
           <div>
             <h2 className="text-2xl font-bold text-stone-900">{user.name}</h2>
             <p className="text-stone-500 font-medium">{user.email}</p>
@@ -89,6 +141,22 @@ export default function Profile() {
 
         {/* Profile Form */}
         <form onSubmit={handleSubmit} className="p-8">
+          <div className="mb-8">
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-stone-700 flex items-center">
+                <User className="w-4 h-4 mr-2 text-stone-400" /> Full Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="John Doe"
+                className="w-full bg-stone-50 border border-stone-200 text-stone-900 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+              />
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             <div className="space-y-2">
               <label className="text-sm font-bold text-stone-700 flex items-center">

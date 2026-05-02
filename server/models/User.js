@@ -18,8 +18,19 @@ const userSchema = new mongoose.Schema({
   },
   googleId: {
     type: String,
-    required: true,
-    unique: true
+    unique: true,
+    sparse: true
+  },
+  password: {
+    type: String,
+    select: false
+  },
+  isEmailVerified: {
+    type: Boolean,
+    default: false
+  },
+  verificationToken: {
+    type: String
   },
   favorites: [{
     type: mongoose.Schema.Types.ObjectId,

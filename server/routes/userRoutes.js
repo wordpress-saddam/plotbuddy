@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const { protect } = require('../middleware/authMiddleware');
+const { upload } = require('../config/cloudinary');
 
 // @route   GET /api/users/me
 // @desc    Get current user profile (with favorites populated)
@@ -37,13 +38,14 @@ router.get('/me', protect, async (req, res) => {
 // @access  Private
 router.put('/me', protect, async (req, res) => {
   try {
-    const { phone, address, bio } = req.body;
+    const { name, phone, address, bio } = req.body;
     
     const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
     
+    if (name !== undefined) user.name = name;
     if (phone !== undefined) user.phone = phone;
     if (address !== undefined) user.address = address;
     if (bio !== undefined) user.bio = bio;
@@ -130,6 +132,34 @@ router.delete('/favorites/:plotId', protect, async (req, res) => {
     });
   } catch (error) {
     console.error('Error removing favorite:', error);
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
+});
+
+// @route   POST /api/users/profile-photo
+// @desc    Upload profile photo
+// @access  Private
+router.post('/profile-photo', protect, upload.single('profilePicture'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'Please upload a file' });
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    user.profilePicture = req.file.path;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile photo updated successfully',
+      profilePicture: user.profilePicture
+    });
+  } catch (error) {
+    console.error('Error uploading profile photo:', error);
     res.status(500).json({ success: false, message: 'Server Error' });
   }
 });

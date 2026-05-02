@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
-import { MapPin, IndianRupee, Move, Loader2, CheckCircle2, Circle } from 'lucide-react';
+import { MapPin, IndianRupee, Move, Loader2, CheckCircle2, Circle, Edit2, Trash2 } from 'lucide-react';
 
 export default function MyPlots() {
   const [plots, setPlots] = useState<any[]>([]);
@@ -42,7 +42,6 @@ export default function MyPlots() {
       });
       
       if (response.data.success) {
-        // Update local state
         setPlots(plots.map(plot => 
           plot._id === plotId ? { ...plot, isBooked: response.data.data.isBooked } : plot
         ));
@@ -52,6 +51,23 @@ export default function MyPlots() {
       alert('Failed to update plot status. Please try again.');
     } finally {
       setTogglingId(null);
+    }
+  };
+
+  const handleDelete = async (plotId: string) => {
+    if (!window.confirm('Are you sure you want to delete this plot? This action cannot be undone.')) {
+      return;
+    }
+    try {
+      const response = await axios.delete(`http://localhost:5001/api/lands/${plotId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.data.success) {
+        setPlots(plots.filter(plot => plot._id !== plotId));
+      }
+    } catch (error) {
+      console.error('Failed to delete plot:', error);
+      alert('Failed to delete plot.');
     }
   };
 
@@ -150,9 +166,25 @@ export default function MyPlots() {
                       </>
                     )}
                   </button>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <Link 
+                      to={`/edit-plot/${plot._id}`} 
+                      className="py-2 rounded-xl text-center text-sm font-semibold border border-stone-200 text-stone-600 hover:bg-stone-50 hover:text-primary transition-colors flex items-center justify-center"
+                    >
+                      <Edit2 className="w-4 h-4 mr-1.5" /> Edit
+                    </Link>
+                    <button 
+                      onClick={() => handleDelete(plot._id)}
+                      className="py-2 rounded-xl text-center text-sm font-semibold border border-red-100 text-red-600 hover:bg-red-50 transition-colors flex items-center justify-center"
+                    >
+                      <Trash2 className="w-4 h-4 mr-1.5" /> Delete
+                    </button>
+                  </div>
+                  
                   <Link 
                     to={`/plots/${plot._id}`} 
-                    className="w-full py-2 rounded-xl text-center text-sm font-semibold text-stone-500 hover:text-primary transition-colors"
+                    className="w-full py-1.5 mt-1 rounded-xl text-center text-sm font-semibold text-stone-500 hover:text-primary transition-colors"
                   >
                     View Details
                   </Link>
