@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { MapPin, IndianRupee, Move, Loader2, Filter, Search } from 'lucide-react';
+import FavoriteButton from '../components/FavoriteButton';
 
 export default function PlotsList() {
   const [plots, setPlots] = useState<any[]>([]);
@@ -109,8 +110,14 @@ export default function PlotsList() {
                         <span>No Image</span>
                       </div>
                     )}
+                    <div className="absolute top-2 left-2 sm:hidden z-10">
+                      <FavoriteButton plotId={plot._id} size={20} />
+                    </div>
                   </div>
-                  <div className="p-5 flex-1 flex flex-col">
+                  <div className="p-5 flex-1 flex flex-col relative">
+                    <div className="hidden sm:block absolute top-4 right-4 z-10">
+                      <FavoriteButton plotId={plot._id} size={22} />
+                    </div>
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="font-bold text-lg text-stone-900 line-clamp-1">{plot.title}</h3>
                     </div>

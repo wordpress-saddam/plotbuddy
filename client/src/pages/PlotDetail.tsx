@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
 import { MapPin, IndianRupee, Move, Loader2, ArrowLeft, Check, LayoutGrid, Zap, Droplet, CheckCircle2 } from 'lucide-react';
+import FavoriteButton from '../components/FavoriteButton';
 
 export default function PlotDetail() {
   const { id } = useParams<{ id: string }>();
@@ -94,8 +95,11 @@ export default function PlotDetail() {
             {/* Description / Main Info */}
             <div className="bg-white rounded-3xl shadow-sm border border-stone-200 p-8">
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
-                <div>
-                  <h1 className="text-3xl font-extrabold text-stone-900 mb-2">{plot.title}</h1>
+                <div className="flex-1">
+                  <div className="flex items-center gap-4 mb-2">
+                    <h1 className="text-3xl font-extrabold text-stone-900">{plot.title}</h1>
+                    <FavoriteButton plotId={plot._id} size={28} className="shadow-sm border border-stone-100" />
+                  </div>
                   <div className="flex items-center text-stone-500 font-medium">
                     <MapPin className="w-5 h-5 mr-1.5 text-primary" />
                     Coordinates: {plot.location?.coordinates[1]}, {plot.location?.coordinates[0]}

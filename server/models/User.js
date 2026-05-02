@@ -20,6 +20,22 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true
+  },
+  favorites: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Land'
+  }],
+  phone: {
+    type: String,
+    trim: true
+  },
+  address: {
+    type: String,
+    trim: true
+  },
+  bio: {
+    type: String,
+    trim: true
   }
 }, {
   timestamps: true

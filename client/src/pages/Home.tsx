@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import RegistrationForm from '../components/RegistrationForm';
 import PreviewCard from '../components/PreviewCard';
+import FavoriteButton from '../components/FavoriteButton';
 import { useAuth } from '../context/AuthContext';
 import { MapPin, IndianRupee, Move, ArrowRight, Loader2 } from 'lucide-react';
 
@@ -98,7 +99,10 @@ export default function Home() {
                       <span>No Image</span>
                     </div>
                   )}
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur text-stone-800 text-xs px-2.5 py-1 rounded-md font-bold shadow-sm">
+                  <div className="absolute top-4 right-4 z-10">
+                    <FavoriteButton plotId={plot._id} />
+                  </div>
+                  <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur text-stone-800 text-xs px-2.5 py-1 rounded-md font-bold shadow-sm">
                     <IndianRupee className="w-3 h-3 inline mr-0.5" />{plot.monthlyRent}/mo
                   </div>
                 </div>

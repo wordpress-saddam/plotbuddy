@@ -19,8 +19,13 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
+// const landRoutes = require('./routes/landRoutes');
+// const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
+
 app.use('/api/lands', landRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 // Health Check
 app.get('/health', (req, res) => {

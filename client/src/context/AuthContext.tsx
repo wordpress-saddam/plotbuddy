@@ -5,6 +5,10 @@ interface User {
   name: string;
   email: string;
   profilePicture?: string;
+  phone?: string;
+  address?: string;
+  bio?: string;
+  favorites: string[];
 }
 
 interface AuthContextType {
@@ -12,6 +16,8 @@ interface AuthContextType {
   token: string | null;
   login: (userData: User, token: string) => void;
   logout: () => void;
+  updateUser: (data: Partial<User>) => void;
+  toggleFavorite: (plotId: string) => void;
   isAuthenticated: boolean;
 }
 
@@ -50,8 +56,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('plotbuddy_token');
   };
 
+  const updateUser = (data: Partial<User>) => {
+    if (user) {
+      const updatedUser = { ...user, ...data };
+      setUser(updatedUser);
+      localStorage.setItem('plotbuddy_user', JSON.stringify(updatedUser));
+    }
+  };
+
+  const toggleFavorite = (plotId: string) => {
+    if (user) {
+      const isFavorite = user.favorites.includes(plotId);
+      const newFavorites = isFavorite 
+        ? user.favorites.filter(id => id !== plotId)
+        : [...user.favorites, plotId];
+      
+      updateUser({ favorites: newFavorites });
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, token, login, logout, updateUser, toggleFavorite, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );

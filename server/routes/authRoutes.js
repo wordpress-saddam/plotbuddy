@@ -51,7 +51,11 @@ router.post('/google', async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        profilePicture: user.profilePicture
+        profilePicture: user.profilePicture,
+        phone: user.phone,
+        address: user.address,
+        bio: user.bio,
+        favorites: user.favorites || []
       }
     });
   } catch (error) {
