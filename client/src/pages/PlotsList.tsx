@@ -121,9 +121,9 @@ export default function PlotsList() {
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="font-bold text-lg text-stone-900 line-clamp-1">{plot.title}</h3>
                     </div>
-                    <div className="flex items-center text-sm text-stone-500 mb-4">
-                      <MapPin className="w-3.5 h-3.5 mr-1" />
-                      Lat: {plot.location?.coordinates[1]?.toFixed(3) || 'N/A'}, Lng: {plot.location?.coordinates[0]?.toFixed(3) || 'N/A'}
+                    <div className="flex items-center text-sm text-stone-500 mb-4 line-clamp-1">
+                      <MapPin className="w-3.5 h-3.5 mr-1 text-primary" />
+                      {plot.address}
                     </div>
                     
                     <div className="mt-auto pt-4 border-t border-stone-100 grid grid-cols-2 gap-4">

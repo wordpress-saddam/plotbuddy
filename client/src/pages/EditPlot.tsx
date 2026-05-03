@@ -18,6 +18,8 @@ export default function EditPlot() {
     title: '',
     area: '',
     monthlyRent: '',
+    address: '',
+    googleMapsLink: '',
     lat: '',
     lng: '',
     fencing: false,
@@ -45,8 +47,10 @@ export default function EditPlot() {
             title: plot.title,
             area: plot.area.toString(),
             monthlyRent: plot.monthlyRent.toString(),
-            lat: plot.location.coordinates[1].toString(),
-            lng: plot.location.coordinates[0].toString(),
+            address: plot.address || '',
+            googleMapsLink: plot.googleMapsLink || '',
+            lat: plot.location?.coordinates ? plot.location.coordinates[1].toString() : '',
+            lng: plot.location?.coordinates ? plot.location.coordinates[0].toString() : '',
             fencing: plot.amenities.fencing,
             water: plot.amenities.water,
             electricity: plot.amenities.electricity,
@@ -86,12 +90,20 @@ export default function EditPlot() {
     setSaving(true);
     setError(null);
 
-    const lat = parseFloat(formData.lat);
-    const lng = parseFloat(formData.lng);
-    if (isNaN(lat) || isNaN(lng) || lat < 28.2 || lat > 28.9 || lng < 76.8 || lng > 77.6) {
-      setError("Coordinates must be within Delhi NCR region (Lat: 28.2-28.9, Lng: 76.8-77.6)");
+    if (!formData.address) {
+      setError("Address is required.");
       setSaving(false);
       return;
+    }
+
+    if (formData.lat || formData.lng) {
+      const lat = parseFloat(formData.lat);
+      const lng = parseFloat(formData.lng);
+      if (isNaN(lat) || isNaN(lng) || lat < 28.2 || lat > 28.9 || lng < 76.8 || lng > 77.6) {
+        setError("Coordinates must be within Delhi NCR region (Lat: 28.2-28.9, Lng: 76.8-77.6)");
+        setSaving(false);
+        return;
+      }
     }
 
     const submitData = new FormData();
@@ -214,32 +226,58 @@ export default function EditPlot() {
           {/* Location */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-stone-900 border-b border-stone-100 pb-2 flex items-center">
-              <MapPin className="w-5 h-5 mr-2 text-primary" /> Location (Delhi NCR)
+              <MapPin className="w-5 h-5 mr-2 text-primary" /> Location Details
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-bold text-stone-700 mb-2">Latitude</label>
-                <input
-                  type="number"
-                  step="any"
-                  name="lat"
-                  value={formData.lat}
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-stone-700 mb-2">Longitude</label>
-                <input
-                  type="number"
-                  step="any"
-                  name="lng"
-                  value={formData.lng}
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                />
+            
+            <div>
+              <label className="block text-sm font-bold text-stone-700 mb-2">Manual Address <span className="text-red-500">*</span></label>
+              <textarea
+                name="address"
+                value={formData.address}
+                onChange={(e: any) => handleChange(e)}
+                required
+                placeholder="Enter full address manually"
+                className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all h-24"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-bold text-stone-700 mb-2">Google Maps Link (Optional)</label>
+              <input
+                type="url"
+                name="googleMapsLink"
+                value={formData.googleMapsLink}
+                onChange={handleChange}
+                placeholder="https://goo.gl/maps/..."
+                className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+              />
+            </div>
+
+            <div className="pt-4 border-t border-stone-100">
+              <h4 className="text-sm font-bold text-stone-900 mb-4">Coordinates (Optional)</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-bold text-stone-700 mb-2">Latitude</label>
+                  <input
+                    type="number"
+                    step="any"
+                    name="lat"
+                    value={formData.lat}
+                    onChange={handleChange}
+                    className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-stone-700 mb-2">Longitude</label>
+                  <input
+                    type="number"
+                    step="any"
+                    name="lng"
+                    value={formData.lng}
+                    onChange={handleChange}
+                    className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                  />
+                </div>
               </div>
             </div>
           </div>

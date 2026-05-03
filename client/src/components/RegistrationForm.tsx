@@ -19,6 +19,8 @@ export default function RegistrationForm({ onFormDataChange, onImageChange }: Re
     title: '',
     area: '',
     monthlyRent: '',
+    address: '',
+    googleMapsLink: '',
     lat: '',
     lng: '',
     fencing: false,
@@ -49,14 +51,24 @@ export default function RegistrationForm({ onFormDataChange, onImageChange }: Re
   };
 
   const validateStep2 = () => {
-    const lat = parseFloat(formData.lat);
-    const lng = parseFloat(formData.lng);
-    const minLat = 28.2, maxLat = 28.9, minLng = 76.8, maxLng = 77.6;
-    
-    if (isNaN(lat) || isNaN(lng)) return false;
-    if (lat < minLat || lat > maxLat || lng < minLng || lng > maxLng) {
-      setError("Coordinates must be within Delhi NCR region (Lat: 28.2-28.9, Lng: 76.8-77.6)");
+    if (!formData.address) {
+      setError("Address is required.");
       return false;
+    }
+
+    if (formData.lat || formData.lng) {
+      const lat = parseFloat(formData.lat);
+      const lng = parseFloat(formData.lng);
+      const minLat = 28.2, maxLat = 28.9, minLng = 76.8, maxLng = 77.6;
+      
+      if (isNaN(lat) || isNaN(lng)) {
+        setError("Please provide both latitude and longitude or leave both empty.");
+        return false;
+      }
+      if (lat < minLat || lat > maxLat || lng < minLng || lng > maxLng) {
+        setError("Coordinates must be within Delhi NCR region (Lat: 28.2-28.9, Lng: 76.8-77.6)");
+        return false;
+      }
     }
     setError(null);
     return true;
@@ -189,20 +201,27 @@ export default function RegistrationForm({ onFormDataChange, onImageChange }: Re
         {/* Step 2: Location */}
         <div className={`space-y-6 transition-all duration-500 ${step === 2 ? 'block animate-in fade-in slide-in-from-right-4' : 'hidden'}`}>
           <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-800 mb-6">
-            Please enter coordinates within Delhi NCR.
-            <ul className="list-disc ml-5 mt-1 opacity-80 text-xs">
-              <li>Latitude: 28.2 to 28.9</li>
-              <li>Longitude: 76.8 to 77.6</li>
-            </ul>
+            Provide the manual address and optional map location.
           </div>
-          <div className="grid grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Latitude <span className="text-red-500">*</span></label>
-              <input type="number" step="any" name="lat" value={formData.lat} onChange={handleInputChange} placeholder="28.5355" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" required />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Longitude <span className="text-red-500">*</span></label>
-              <input type="number" step="any" name="lng" value={formData.lng} onChange={handleInputChange} placeholder="77.3910" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" required />
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Manual Address <span className="text-red-500">*</span></label>
+            <textarea name="address" value={formData.address} onChange={(e: any) => handleInputChange(e)} placeholder="Enter full address manually" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all h-24" required />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Google Maps Link (Optional)</label>
+            <input type="url" name="googleMapsLink" value={formData.googleMapsLink} onChange={handleInputChange} placeholder="https://goo.gl/maps/..." className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
+          </div>
+          <div className="pt-4 border-t border-slate-100">
+            <h4 className="text-sm font-bold text-slate-900 mb-4">Coordinates (Optional)</h4>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Latitude</label>
+                <input type="number" step="any" name="lat" value={formData.lat} onChange={handleInputChange} placeholder="28.5355" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Longitude</label>
+                <input type="number" step="any" name="lng" value={formData.lng} onChange={handleInputChange} placeholder="77.3910" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
+              </div>
             </div>
           </div>
         </div>

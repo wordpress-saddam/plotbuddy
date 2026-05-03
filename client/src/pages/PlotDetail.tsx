@@ -100,9 +100,9 @@ export default function PlotDetail() {
                     <h1 className="text-3xl font-extrabold text-stone-900">{plot.title}</h1>
                     <FavoriteButton plotId={plot._id} size={28} className="shadow-sm border border-stone-100" />
                   </div>
-                  <div className="flex items-center text-stone-500 font-medium">
-                    <MapPin className="w-5 h-5 mr-1.5 text-primary" />
-                    Coordinates: {plot.location?.coordinates[1]}, {plot.location?.coordinates[0]}
+                  <div className="flex items-start text-stone-500 font-medium">
+                    <MapPin className="w-5 h-5 mr-1.5 text-primary shrink-0 mt-0.5" />
+                    {plot.address}
                   </div>
                 </div>
                 <div className="flex flex-col gap-2 shrink-0 self-start">
@@ -135,6 +135,24 @@ export default function PlotDetail() {
                   <p className="text-xs text-stone-500 uppercase font-bold tracking-wider mb-1">Monthly Rent</p>
                   <p className="font-bold text-stone-900 text-lg">₹{plot.monthlyRent}</p>
                 </div>
+                {plot.googleMapsLink && (
+                  <a href={plot.googleMapsLink} target="_blank" rel="noopener noreferrer" className="bg-stone-50 p-4 rounded-2xl border border-stone-100 text-center hover:bg-stone-100 transition-colors block">
+                    <div className="w-10 h-10 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <MapPin className="w-5 h-5" />
+                    </div>
+                    <p className="text-xs text-stone-500 uppercase font-bold tracking-wider mb-1">Maps Link</p>
+                    <p className="font-bold text-primary text-sm">Open in Google Maps</p>
+                  </a>
+                )}
+                {plot.location?.coordinates && (
+                  <div className="bg-stone-50 p-4 rounded-2xl border border-stone-100 text-center col-span-1">
+                    <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <LayoutGrid className="w-5 h-5" />
+                    </div>
+                    <p className="text-xs text-stone-500 uppercase font-bold tracking-wider mb-1">Coordinates</p>
+                    <p className="font-bold text-stone-900 text-[10px]">{plot.location.coordinates[1].toFixed(4)}, {plot.location.coordinates[0].toFixed(4)}</p>
+                  </div>
+                )}
               </div>
 
               <h3 className="text-xl font-bold text-stone-900 mb-4">Available Amenities</h3>

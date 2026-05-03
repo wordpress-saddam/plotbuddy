@@ -18,18 +18,27 @@ const isWithinDelhiNCR = (lat, lng) => {
 // @access  Private
 router.post('/register', protect, upload.array('images', 5), async (req, res) => {
   try {
-    const { title, area, lat, lng, fencing, water, electricity, monthlyRent } = req.body;
-
-    // Validate coordinates
-    const latitude = parseFloat(lat);
-    const longitude = parseFloat(lng);
+    const { title, area, address, googleMapsLink, lat, lng, fencing, water, electricity, monthlyRent } = req.body;
     
-    if (isNaN(latitude) || isNaN(longitude)) {
-      return res.status(400).json({ success: false, message: 'Invalid coordinates provided.' });
-    }
+    let location = undefined;
 
-    if (!isWithinDelhiNCR(latitude, longitude)) {
-      return res.status(400).json({ success: false, message: 'Plot location must be within Delhi NCR.' });
+    // Validate coordinates only if provided
+    if (lat && lng) {
+      const latitude = parseFloat(lat);
+      const longitude = parseFloat(lng);
+      
+      if (isNaN(latitude) || isNaN(longitude)) {
+        return res.status(400).json({ success: false, message: 'Invalid coordinates provided.' });
+      }
+
+      if (!isWithinDelhiNCR(latitude, longitude)) {
+        return res.status(400).json({ success: false, message: 'Plot location must be within Delhi NCR.' });
+      }
+
+      location = {
+        type: 'Point',
+        coordinates: [longitude, latitude]
+      };
     }
 
     // Get Cloudinary URLs
@@ -38,11 +47,9 @@ router.post('/register', protect, upload.array('images', 5), async (req, res) =>
     const newLand = new Land({
       title,
       area: parseFloat(area),
-      location: {
-        type: 'Point',
-        // Note: GeoJSON uses [longitude, latitude]
-        coordinates: [longitude, latitude]
-      },
+      address,
+      googleMapsLink,
+      location,
       amenities: {
         fencing: fencing === 'true' || fencing === true,
         water: water === 'true' || water === true,
@@ -182,7 +189,7 @@ router.put('/:id/toggle-booked', protect, async (req, res) => {
 // @access  Private
 router.put('/:id', protect, upload.array('images', 5), async (req, res) => {
   try {
-    const { title, area, lat, lng, fencing, water, electricity, monthlyRent } = req.body;
+    const { title, area, address, googleMapsLink, lat, lng, fencing, water, electricity, monthlyRent } = req.body;
     let land = await Land.findById(req.params.id);
 
     if (!land) {
@@ -193,23 +200,33 @@ router.put('/:id', protect, upload.array('images', 5), async (req, res) => {
       return res.status(403).json({ success: false, message: 'Not authorized to update this plot' });
     }
 
-    // Validate coordinates
-    const latitude = parseFloat(lat);
-    const longitude = parseFloat(lng);
-    
-    if (isNaN(latitude) || isNaN(longitude)) {
-      return res.status(400).json({ success: false, message: 'Invalid coordinates provided.' });
-    }
+    // Validate coordinates only if provided
+    if (lat && lng) {
+      const latitude = parseFloat(lat);
+      const longitude = parseFloat(lng);
+      
+      if (isNaN(latitude) || isNaN(longitude)) {
+        return res.status(400).json({ success: false, message: 'Invalid coordinates provided.' });
+      }
 
-    if (!isWithinDelhiNCR(latitude, longitude)) {
-      return res.status(400).json({ success: false, message: 'Plot location must be within Delhi NCR.' });
+      if (!isWithinDelhiNCR(latitude, longitude)) {
+        return res.status(400).json({ success: false, message: 'Plot location must be within Delhi NCR.' });
+      }
+
+      land.location = {
+        type: 'Point',
+        coordinates: [longitude, latitude]
+      };
+    } else {
+      land.location = undefined;
     }
 
     const imageUrls = req.files && req.files.length > 0 ? req.files.map(file => file.path) : land.images;
 
     land.title = title;
     land.area = parseFloat(area);
-    land.location.coordinates = [longitude, latitude];
+    land.address = address;
+    land.googleMapsLink = googleMapsLink;
     land.amenities = {
       fencing: fencing === 'true' || fencing === true,
       water: water === 'true' || water === true,

@@ -44,8 +44,8 @@ export default function PreviewCard({ data, images }: PreviewCardProps) {
             {data.title || 'Your Plot Title Here'}
           </h3>
           <div className="flex items-center text-sm mt-1 opacity-90 font-medium">
-            <MapPin className="w-4 h-4 mr-1" />
-            {data.lat && data.lng ? `Lat: ${data.lat}, Lng: ${data.lng}` : 'Delhi NCR Location'}
+            <MapPin className="w-4 h-4 mr-1 text-primary-light" />
+            {data.address || 'Delhi NCR Address'}
           </div>
         </div>
       </div>

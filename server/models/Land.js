@@ -10,15 +10,24 @@ const LandSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  address: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  googleMapsLink: {
+    type: String,
+    trim: true
+  },
   location: {
     type: {
       type: String,
       enum: ['Point'],
-      required: true
+      default: 'Point'
     },
     coordinates: {
       type: [Number],
-      required: true
+      default: undefined
     }
   },
   amenities: {
