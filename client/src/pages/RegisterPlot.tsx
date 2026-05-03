@@ -13,6 +13,8 @@ export default function RegisterPlot() {
     title: '',
     area: '',
     monthlyRent: '',
+    address: '',
+    googleMapsLink: '',
     lat: '',
     lng: '',
     fencing: false,

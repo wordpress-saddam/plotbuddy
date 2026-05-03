@@ -22,8 +22,10 @@ router.post('/register', protect, upload.array('images', 5), async (req, res) =>
     
     let location = undefined;
 
-    // Validate coordinates only if provided
-    if (lat && lng) {
+    // Validate coordinates only if both are provided and not empty
+    const hasCoordinates = lat && lng && lat.toString().trim() !== '' && lng.toString().trim() !== '';
+
+    if (hasCoordinates) {
       const latitude = parseFloat(lat);
       const longitude = parseFloat(lng);
       
@@ -39,17 +41,21 @@ router.post('/register', protect, upload.array('images', 5), async (req, res) =>
         type: 'Point',
         coordinates: [longitude, latitude]
       };
+    } else if (lat || lng) {
+      // If only one is provided, or if they are empty strings that somehow bypassed the first check
+      if (lat.toString().trim() !== '' || lng.toString().trim() !== '') {
+         return res.status(400).json({ success: false, message: 'Please provide both latitude and longitude or leave both empty.' });
+      }
     }
 
     // Get Cloudinary URLs
     const imageUrls = req.files ? req.files.map(file => file.path) : [];
 
-    const newLand = new Land({
+    const landData = {
       title,
       area: parseFloat(area),
       address,
       googleMapsLink,
-      location,
       amenities: {
         fencing: fencing === 'true' || fencing === true,
         water: water === 'true' || water === true,
@@ -57,8 +63,14 @@ router.post('/register', protect, upload.array('images', 5), async (req, res) =>
       },
       monthlyRent: parseFloat(monthlyRent),
       images: imageUrls,
-      owner: req.user.id // Associate the land with the logged-in user
-    });
+      owner: req.user.id
+    };
+
+    if (location) {
+      landData.location = location;
+    }
+
+    const newLand = new Land(landData);
 
     await newLand.save();
 
@@ -201,7 +213,9 @@ router.put('/:id', protect, upload.array('images', 5), async (req, res) => {
     }
 
     // Validate coordinates only if provided
-    if (lat && lng) {
+    const hasCoordinates = lat && lng && lat.toString().trim() !== '' && lng.toString().trim() !== '';
+
+    if (hasCoordinates) {
       const latitude = parseFloat(lat);
       const longitude = parseFloat(lng);
       
@@ -218,6 +232,7 @@ router.put('/:id', protect, upload.array('images', 5), async (req, res) => {
         coordinates: [longitude, latitude]
       };
     } else {
+      // If either is missing or empty, remove the location
       land.location = undefined;
     }
 

@@ -108,7 +108,8 @@ export default function EditPlot() {
 
     const submitData = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
-      submitData.append(key, value.toString());
+      const stringValue = (value !== null && value !== undefined) ? value.toString() : '';
+      submitData.append(key, stringValue);
     });
 
     if (images) {

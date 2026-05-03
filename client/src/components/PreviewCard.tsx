@@ -43,9 +43,16 @@ export default function PreviewCard({ data, images }: PreviewCardProps) {
           <h3 className="font-bold text-xl truncate drop-shadow-md">
             {data.title || 'Your Plot Title Here'}
           </h3>
-          <div className="flex items-center text-sm mt-1 opacity-90 font-medium">
-            <MapPin className="w-4 h-4 mr-1 text-primary-light" />
-            {data.address || 'Delhi NCR Address'}
+          <div className="flex flex-col gap-1 mt-1">
+            <div className="flex items-center text-sm opacity-90 font-medium">
+              <MapPin className="w-4 h-4 mr-1 text-primary-light shrink-0" />
+              {data.address || 'Delhi NCR Address'}
+            </div>
+            {data.googleMapsLink && (
+              <span className="text-[10px] text-blue-200 ml-5 font-bold">
+                Map Link Attached
+              </span>
+            )}
           </div>
         </div>
       </div>

@@ -121,9 +121,22 @@ export default function PlotsList() {
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="font-bold text-lg text-stone-900 line-clamp-1">{plot.title}</h3>
                     </div>
-                    <div className="flex items-center text-sm text-stone-500 mb-4 line-clamp-1">
-                      <MapPin className="w-3.5 h-3.5 mr-1 text-primary" />
-                      {plot.address}
+                    <div className="flex flex-col gap-1 mb-4">
+                      <div className="flex items-center text-sm text-stone-500 line-clamp-1">
+                        <MapPin className="w-3.5 h-3.5 mr-1 text-primary shrink-0" />
+                        {plot.address}
+                      </div>
+                      {plot.googleMapsLink && (
+                        <a 
+                          href={plot.googleMapsLink} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-[10px] text-blue-600 hover:underline flex items-center ml-4.5 font-bold"
+                        >
+                          View on Map
+                        </a>
+                      )}
                     </div>
                     
                     <div className="mt-auto pt-4 border-t border-stone-100 grid grid-cols-2 gap-4">

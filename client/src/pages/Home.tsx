@@ -108,9 +108,21 @@ export default function Home() {
                 </div>
                 <div className="p-5">
                   <h3 className="font-bold text-lg text-stone-900 truncate mb-1">{plot.title}</h3>
-                  <div className="flex items-center text-sm text-stone-500 mb-4">
-                    <MapPin className="w-3.5 h-3.5 mr-1" />
-                    Lat: {plot.location?.coordinates[1]?.toFixed(2) || 'N/A'}, Lng: {plot.location?.coordinates[0]?.toFixed(2) || 'N/A'}
+                  <div className="flex flex-col gap-1 mb-4">
+                    <div className="flex items-center text-sm text-stone-500 line-clamp-1">
+                      <MapPin className="w-3.5 h-3.5 mr-1 text-primary shrink-0" />
+                      {plot.address}
+                    </div>
+                    {plot.googleMapsLink && (
+                      <a 
+                        href={plot.googleMapsLink} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="text-[10px] text-blue-600 hover:underline ml-4.5 font-bold"
+                      >
+                        View on Map
+                      </a>
+                    )}
                   </div>
                   <div className="flex items-center justify-between border-t border-stone-100 pt-4">
                     <div className="flex items-center text-sm font-medium text-stone-700">
