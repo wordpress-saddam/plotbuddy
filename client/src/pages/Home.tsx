@@ -10,7 +10,7 @@ import { MapPin, IndianRupee, Move, ArrowRight, Loader2 } from 'lucide-react';
 export default function Home() {
   const [formData, setFormData] = useState({});
   const [images, setImages] = useState<FileList | null>(null);
-  
+
   const [recentPlots, setRecentPlots] = useState<any[]>([]);
   const [loadingPlots, setLoadingPlots] = useState(true);
   const { isAuthenticated } = useAuth();
@@ -18,7 +18,7 @@ export default function Home() {
   useEffect(() => {
     const fetchRecentPlots = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/lands?limit=3');
+        const response = await axios.get('http://localhost:5001/api/lands?limit=6');
         if (response.data.success) {
           setRecentPlots(response.data.data);
         }
@@ -28,7 +28,7 @@ export default function Home() {
         setLoadingPlots(false);
       }
     };
-    
+
     fetchRecentPlots();
   }, []);
 
@@ -38,7 +38,7 @@ export default function Home() {
       <div className="bg-gradient-to-b from-stone-900 to-stone-800 text-white pt-20 pb-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
-        
+
         <div className="max-w-7xl mx-auto relative z-10 text-center">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
             Monetize Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-300">Vacant Land</span> Today
@@ -54,15 +54,15 @@ export default function Home() {
         <div className="bg-white p-8 rounded-3xl shadow-xl border border-stone-200 w-full max-w-3xl text-center flex flex-col items-center">
           <h2 className="text-2xl font-bold text-stone-800 mb-6">Ready to get started?</h2>
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
-            <Link 
-              to="/plots" 
+            <Link
+              to="/plots"
               className="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-primary/30 flex justify-center items-center group"
             >
               Browse Available Plots
               <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Link>
-            <Link 
-              to="/register-plot" 
+            <Link
+              to="/register-plot"
               className="bg-stone-100 hover:bg-stone-200 text-stone-900 border border-stone-200 px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-sm flex justify-center items-center"
             >
               List Your Plot
@@ -114,10 +114,10 @@ export default function Home() {
                       {plot.address}
                     </div>
                     {plot.googleMapsLink && (
-                      <a 
-                        href={plot.googleMapsLink} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
+                      <a
+                        href={plot.googleMapsLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="text-[10px] text-blue-600 hover:underline ml-4.5 font-bold"
                       >
                         View on Map
@@ -142,7 +142,7 @@ export default function Home() {
             <p className="text-stone-500 font-medium">No plots have been listed yet. Be the first!</p>
           </div>
         )}
-        
+
         <div className="mt-8 text-center sm:hidden">
           <Link to="/plots" className="inline-flex items-center justify-center w-full bg-stone-100 text-stone-800 font-semibold py-3 rounded-xl hover:bg-stone-200 transition-colors">
             View All Plots
