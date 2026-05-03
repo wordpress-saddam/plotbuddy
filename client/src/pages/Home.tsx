@@ -1,19 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import RegistrationForm from '../components/RegistrationForm';
-import PreviewCard from '../components/PreviewCard';
 import FavoriteButton from '../components/FavoriteButton';
-import { useAuth } from '../context/AuthContext';
 import { MapPin, IndianRupee, Move, ArrowRight, Loader2 } from 'lucide-react';
 
 export default function Home() {
-  const [formData, setFormData] = useState({});
-  const [images, setImages] = useState<FileList | null>(null);
-
   const [recentPlots, setRecentPlots] = useState<any[]>([]);
   const [loadingPlots, setLoadingPlots] = useState(true);
-  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const fetchRecentPlots = async () => {
