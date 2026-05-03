@@ -57,6 +57,7 @@ router.post('/google', async (req, res) => {
         phone: user.phone,
         address: user.address,
         bio: user.bio,
+        role: user.role,
         favorites: user.favorites || []
       }
     });
@@ -159,6 +160,10 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
+    if (!user.isActive) {
+      return res.status(401).json({ success: false, message: 'Your account is inactive. Please contact support.' });
+    }
+
     // Check if user has password (might be a google only user)
     if (!user.password) {
       return res.status(401).json({ success: false, message: 'Please sign in with Google' });
@@ -191,6 +196,7 @@ router.post('/login', async (req, res) => {
         phone: user.phone,
         address: user.address,
         bio: user.bio,
+        role: user.role,
         favorites: user.favorites || []
       }
     });

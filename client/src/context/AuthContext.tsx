@@ -8,6 +8,7 @@ interface User {
   phone?: string;
   address?: string;
   bio?: string;
+  role?: 'user' | 'administrator';
   favorites: string[];
 }
 

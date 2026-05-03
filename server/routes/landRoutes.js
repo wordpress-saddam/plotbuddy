@@ -63,7 +63,7 @@ router.post('/register', protect, upload.array('images', 5), async (req, res) =>
       },
       monthlyRent: parseFloat(monthlyRent),
       images: imageUrls,
-      owner: req.user.id
+      owner: (req.user.role === 'administrator' && req.body.ownerId) ? req.body.ownerId : req.user.id
     };
 
     if (location) {
@@ -93,8 +93,8 @@ router.get('/', async (req, res) => {
     const { minArea, maxRent, fencing, water, electricity, limit } = req.query;
     
     // Build query object
-    // Exclude booked plots
-    let query = { isBooked: { $ne: true } };
+    // Exclude booked and unpublished plots
+    let query = { isBooked: { $ne: true }, isPublished: { $ne: false } };
     
     if (minArea) query.area = { $gte: parseFloat(minArea) };
     if (maxRent) query.monthlyRent = { $lte: parseFloat(maxRent) };
@@ -178,7 +178,10 @@ router.put('/:id/toggle-booked', protect, async (req, res) => {
     }
     
     // Make sure user owns the plot
-    if (land.owner.toString() !== req.user.id) {
+    const isOwner = land.owner?.toString() === req.user.id;
+    const isAdmin = req.user.role === 'administrator';
+
+    if (!isOwner && !isAdmin) {
       return res.status(403).json({ success: false, message: 'Not authorized to update this plot' });
     }
     
@@ -208,7 +211,10 @@ router.put('/:id', protect, upload.array('images', 5), async (req, res) => {
       return res.status(404).json({ success: false, message: 'Plot not found' });
     }
 
-    if (land.owner.toString() !== req.user.id) {
+    const isOwner = land.owner?.toString() === req.user.id;
+    const isAdmin = req.user.role === 'administrator';
+
+    if (!isOwner && !isAdmin) {
       return res.status(403).json({ success: false, message: 'Not authorized to update this plot' });
     }
 
@@ -270,7 +276,10 @@ router.delete('/:id', protect, async (req, res) => {
       return res.status(404).json({ success: false, message: 'Plot not found' });
     }
 
-    if (land.owner.toString() !== req.user.id) {
+    const isOwner = land.owner?.toString() === req.user.id;
+    const isAdmin = req.user.role === 'administrator';
+
+    if (!isOwner && !isAdmin) {
       return res.status(403).json({ success: false, message: 'Not authorized to delete this plot' });
     }
 

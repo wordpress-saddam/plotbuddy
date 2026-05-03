@@ -49,6 +49,10 @@ const LandSchema = new mongoose.Schema({
   isBooked: {
     type: Boolean,
     default: false
+  },
+  isPublished: {
+    type: Boolean,
+    default: true
   }
 }, {
   timestamps: true

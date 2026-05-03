@@ -37,7 +37,7 @@ export default function EditPlot() {
         if (response.data.success) {
           const plot = response.data.data;
           
-          if (plot.owner !== user?.id) {
+          if (plot.owner !== user?.id && user?.role !== 'administrator') {
             setError("You do not have permission to edit this plot.");
             setLoading(false);
             return;

@@ -9,11 +9,12 @@ interface RegistrationFormProps {
 }
 
 export default function RegistrationForm({ onFormDataChange, onImageChange }: RegistrationFormProps) {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [users, setUsers] = useState<any[]>([]);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -26,13 +27,26 @@ export default function RegistrationForm({ onFormDataChange, onImageChange }: Re
     fencing: false,
     water: false,
     electricity: false,
+    ownerId: '',
   });
 
   const [images, setImages] = useState<FileList | null>(null);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    const newValue = type === 'checkbox' ? checked : value;
+  useEffect(() => {
+    if (user?.role === 'administrator') {
+      axios.get('http://localhost:5001/api/admin/users', {
+        headers: { Authorization: `Bearer ${token}` }
+      }).then(res => setUsers(res.data.data));
+    }
+  }, [user, token]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    let newValue: any = value;
+    
+    if (type === 'checkbox') {
+      newValue = (e.target as HTMLInputElement).checked;
+    }
     
     const updatedData = { ...formData, [name]: newValue };
     setFormData(updatedData);
@@ -197,6 +211,22 @@ export default function RegistrationForm({ onFormDataChange, onImageChange }: Re
               <input type="number" name="monthlyRent" value={formData.monthlyRent} onChange={handleInputChange} placeholder="e.g. 15000" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" required />
             </div>
           </div>
+          {user?.role === 'administrator' && (
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Assign to User (Owner)</label>
+              <select 
+                name="ownerId" 
+                value={formData.ownerId} 
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+              >
+                <option value="">Select User (Default: Yourself)</option>
+                {users.map(u => (
+                  <option key={u._id} value={u._id}>{u.name} ({u.email})</option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
 
         {/* Step 2: Location */}

@@ -8,8 +8,11 @@ import EditPlot from './pages/EditPlot';
 import MyPlots from './pages/MyPlots';
 import Profile from './pages/Profile';
 import Favorites from './pages/Favorites';
+import AdminDashboard from './admin/pages/Dashboard';
+import AdminUsers from './admin/pages/Users';
+import AdminPlots from './admin/pages/Plots';
 import Auth from './pages/Auth';
-import { Map, MapPin, LogOut, Loader2, Heart, User, PlusCircle } from 'lucide-react';
+import { Map, MapPin, LogOut, Loader2, Heart, User, PlusCircle, ShieldCheck } from 'lucide-react';
 import { useAuth } from './context/AuthContext';
 import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
@@ -88,6 +91,11 @@ function App() {
                       <Link to="/register-plot" className="flex items-center px-4 py-2.5 text-sm font-medium text-stone-700 hover:bg-stone-50 hover:text-primary transition-colors">
                         <PlusCircle className="w-4 h-4 mr-3 text-stone-400" /> Register New Plot
                       </Link>
+                      {user.role === 'administrator' && (
+                        <Link to="/admin" className="flex items-center px-4 py-2.5 text-sm font-medium text-stone-700 hover:bg-stone-50 hover:text-primary transition-colors">
+                          <ShieldCheck className="w-4 h-4 mr-3 text-primary" /> Admin Dashboard
+                        </Link>
+                      )}
                     </div>
                     <div className="py-2 border-t border-stone-100">
                       <button 
@@ -123,6 +131,13 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/login" element={<Auth />} />
+          {user?.role === 'administrator' && (
+            <>
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/users" element={<AdminUsers />} />
+              <Route path="/admin/plots" element={<AdminPlots />} />
+            </>
+          )}
         </Routes>
       </main>
 
