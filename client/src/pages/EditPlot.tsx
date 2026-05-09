@@ -25,7 +25,10 @@ export default function EditPlot() {
     fencing: false,
     water: false,
     electricity: false,
+    ownerId: '',
   });
+
+  const [users, setUsers] = useState<any[]>([]);
 
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [images, setImages] = useState<FileList | null>(null);
@@ -54,6 +57,7 @@ export default function EditPlot() {
             fencing: plot.amenities.fencing,
             water: plot.amenities.water,
             electricity: plot.amenities.electricity,
+            ownerId: plot.owner || '',
           });
           setExistingImages(plot.images || []);
         }
@@ -64,18 +68,37 @@ export default function EditPlot() {
       }
     };
 
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get('http://localhost:5001/api/admin/users', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (response.data.success) {
+          setUsers(response.data.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch users:', err);
+      }
+    };
+
     if (isAuthenticated && user) {
       fetchPlot();
+      if (user.role === 'administrator') {
+        fetchUsers();
+      }
     } else {
       setLoading(false);
     }
   }, [id, isAuthenticated, user]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    const isCheckbox = type === 'checkbox';
+    const checked = (e.target as HTMLInputElement).checked;
+    
     setFormData({
       ...formData,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: isCheckbox ? checked : value
     });
   };
 
@@ -223,6 +246,27 @@ export default function EditPlot() {
               </div>
             </div>
           </div>
+
+          {/* Admin: Owner Assignment */}
+          {user?.role === 'administrator' && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold text-stone-900 border-b border-stone-100 pb-2">Admin: Assign Owner</h3>
+              <div>
+                <label className="block text-sm font-bold text-stone-700 mb-2">Assign to User</label>
+                <select
+                  name="ownerId"
+                  value={formData.ownerId}
+                  onChange={(e: any) => handleChange(e)}
+                  className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                >
+                  <option value="">Select User</option>
+                  {users.map(u => (
+                    <option key={u._id} value={u._id}>{u.name} ({u.email})</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
 
           {/* Location */}
           <div className="space-y-4">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { MapPin, Image as ImageIcon, Home, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
