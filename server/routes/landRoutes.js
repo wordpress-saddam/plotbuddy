@@ -204,7 +204,7 @@ router.put('/:id/toggle-booked', protect, async (req, res) => {
 // @access  Private
 router.put('/:id', protect, upload.array('images', 5), async (req, res) => {
   try {
-    const { title, area, address, googleMapsLink, lat, lng, fencing, water, electricity, monthlyRent } = req.body;
+    const { title, area, address, googleMapsLink, lat, lng, fencing, water, electricity, monthlyRent, ownerId } = req.body;
     let land = await Land.findById(req.params.id);
 
     if (!land) {
@@ -255,6 +255,14 @@ router.put('/:id', protect, upload.array('images', 5), async (req, res) => {
     };
     land.monthlyRent = parseFloat(monthlyRent);
     land.images = imageUrls;
+
+    // Allow admin to re-assign owner
+    if (isAdmin && ownerId) {
+      land.owner = ownerId;
+    } else if (!land.owner) {
+      // Safety fallback: if plot somehow has no owner, assign to current user
+      land.owner = req.user.id;
+    }
 
     await land.save();
 
