@@ -20,6 +20,7 @@ interface AuthContextType {
   updateUser: (data: Partial<User>) => void;
   toggleFavorite: (plotId: string) => void;
   isAuthenticated: boolean;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,6 +28,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('plotbuddy_user');
@@ -41,6 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         logout();
       }
     }
+    setLoading(false);
   }, []);
 
   const login = (userData: User, jwtToken: string) => {
@@ -77,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, updateUser, toggleFavorite, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, token, login, logout, updateUser, toggleFavorite, isAuthenticated: !!user, loading }}>
       {children}
     </AuthContext.Provider>
   );
