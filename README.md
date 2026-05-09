@@ -1,47 +1,45 @@
 # PlotBuddy 🏡
 
-Matching landowners with temporary business needs like garages, godowns, or fabrication units in the Delhi NCR area. PlotBuddy is a MERN stack marketplace that allows landowners to list their idle plots for commercial leasing, and allows potential tenants to search, filter, and view detailed listings.
+Matching landowners with temporary business needs like garages, godowns, or fabrication units in the Delhi NCR area. PlotBuddy is a MERN stack marketplace that allows landowners to list their idle plots for commercial leasing and enables potential tenants to search, filter, and view detailed listings.
 
 ---
 
-## 📖 User Documentation
+## 🚀 Key Features
 
-### For Landowners (Listing a Plot)
-1. **Access the Portal:** Open the application in your browser (default: `http://localhost:5173`).
-2. **Start Registration:** On the Home page, fill out the "Basic Info" on the registration card:
-   - **Plot Title:** A catchy name for your listing (e.g., "Spacious Corner Plot").
-   - **Area:** Total size in square yards.
-   - **Monthly Rent:** Your expected monthly lease price in ₹.
-3. **Set Location:** Click "Continue to Location". Enter the exact latitude and longitude of your plot. (Must be within Delhi NCR: Lat `28.2 - 28.9`, Lng `76.8 - 77.6`).
-4. **Add Media & Amenities:** Click "Continue to Media". 
-   - Check the boxes for any available amenities (Fencing, Water, Electricity).
-   - Click the photo upload box to attach images of your plot (at least one image is required).
-5. **Publish:** Click "Publish Listing". Your plot is now live and will appear on the Home page and the Browse Plots page!
+### 🏢 Administrative Power
+- **Dedicated Admin Dashboard**: A specialized interface (`/admin`) for platform oversight.
+- **User Management**: Administrators can list, edit, delete, or temporarily deactivate users.
+- **Plot Management**: Direct control over all listings, including the ability to assign plots to specific users and toggle publication status.
+- **Platform Analytics**: High-level overview of total users, active listings, and platform growth.
 
-### For Tenants (Browsing Plots)
-1. **View Recent Listings:** Scroll down on the Home page to see newly added plots.
-2. **Search and Filter:** Click "Browse Plots" in the top navigation bar.
-   - Use the left sidebar to filter plots by Maximum Rent, Minimum Area, or specific Amenities.
-   - Click "Apply Filters" to instantly update the list.
-3. **View Details:** Click "Details" on any plot card to open the dedicated Plot Detail page. Here you can view the image gallery, full specifications, and contact information.
+### 🔐 Robust Authentication
+- **Dual-Method Auth**: Support for both traditional Email/Password registration and seamless Google SSO.
+- **Role-Based Access**: Strict separation between `administrator` and `user` roles to secure sensitive actions.
+- **Secure Sessions**: JWT-based authentication with protected frontend routes.
+
+### 📍 Advanced Listing Management
+- **Multi-Step Registration**: Intuitive 3-step listing process with live preview.
+- **Location Intelligence**: Support for manual addresses, exact Google Maps links, and coordinate-based regional validation (Delhi NCR).
+- **Amenities Tracking**: Categorize plots by availability of Fencing, Water, and Electricity.
+
+### 🎨 Premium UI/UX
+- **Modular Architecture**: Reusable components for Headers, Footers, and Layouts.
+- **Responsive Design**: Tailored experiences for both desktop and mobile users using Tailwind CSS v4.
+- **Dynamic Interactions**: Micro-animations, hover effects, and real-time state updates.
 
 ---
 
 ## 💻 Developer Documentation
 
 ### Tech Stack
-- **Frontend:** React, Vite, TypeScript, Tailwind CSS v4, React Router DOM, Lucide React (Icons), Axios.
-- **Backend:** Node.js, Express.js, Mongoose (MongoDB).
-- **File Storage:** Cloudinary (via Multer).
-
-### Prerequisites
-- Node.js (v20.19+ or v22.12+)
-- MongoDB Atlas account (or local MongoDB server)
-- Cloudinary account (for image hosting)
+- **Frontend**: React 18, Vite, TypeScript, Tailwind CSS v4, Lucide React, Axios, React Router 6.
+- **Backend**: Node.js, Express.js, Mongoose (MongoDB).
+- **Auth**: JSON Web Tokens (JWT), Google OAuth 2.0.
+- **Media**: Cloudinary (via Multer).
 
 ### 1. Installation
 
-Clone the repository and install dependencies for both the `client` and `server` folders:
+Clone the repository and install dependencies:
 
 ```bash
 # Install backend dependencies
@@ -53,67 +51,58 @@ cd ../client
 npm install
 ```
 
-### 2. Environment Variables (Backend)
+### 2. Environment Variables
 
-In the `server` directory, create a `.env` file with the following variables:
+Create `.env` files in both directories:
 
+**Server (`server/.env`):**
 ```env
 PORT=5001
-MONGODB_URI=mongodb+srv://<db_user>:<db_password>@cluster.mongodb.net/?appName=plotbuddy
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
+MONGODB_URI=mongodb+srv://...
+JWT_SECRET=your_jwt_secret
+CLOUDINARY_CLOUD_NAME=...
+CLOUDINARY_API_KEY=...
+CLOUDINARY_API_SECRET=...
 ```
 
-*(Note: The server runs on port 5001 by default to avoid conflicts with macOS AirTunes on port 5000).*
+**Client (`client/.env`):**
+```env
+VITE_GOOGLE_CLIENT_ID=your_google_client_id
+```
 
-### 3. Running the Application
+### 3. Running Locally
 
-You will need to run the backend and frontend simultaneously in two separate terminal windows.
-
-**Start the Backend Server:**
+**Start Backend:**
 ```bash
 cd server
-npx nodemon index.js
-# You should see: "Server is running on port 5001" and "MongoDB Connected successfully!"
+npm start # or npx nodemon index.js
 ```
 
-**Start the Frontend Server:**
+**Start Frontend:**
 ```bash
 cd client
 npm run dev
-# You should see: "Local: http://localhost:5173/"
 ```
 
-### 4. API Endpoints
-
-- `POST /api/lands/register` - Creates a new plot listing. Requires `multipart/form-data` for image uploads.
-- `GET /api/lands` - Returns all plots. Accepts query parameters: `minArea`, `maxRent`, `fencing`, `water`, `electricity`, `limit`.
-- `GET /api/lands/:id` - Returns a specific plot by its MongoDB Object ID.
-
-### 5. Directory Structure
+### 4. Project Structure
 ```
 plotbuddy/
 ├── server/
-│   ├── config/
-│   │   └── cloudinary.js      # Multer & Cloudinary setup
-│   ├── models/
-│   │   └── Land.js            # Mongoose Schema
-│   ├── routes/
-│   │   └── landRoutes.js      # API endpoint logic
-│   ├── index.js               # Express server entry point
-│   └── .env                   # Secrets (Not committed)
+│   ├── middleware/        # Auth & Admin protection
+│   ├── models/            # User & Land schemas
+│   ├── routes/            # Land, User, & Admin APIs
+│   └── index.js           # Express entry point
 └── client/
     ├── src/
-    │   ├── components/
-    │   │   ├── RegistrationForm.tsx
-    │   │   └── PreviewCard.tsx
-    │   ├── pages/
-    │   │   ├── Home.tsx
-    │   │   ├── PlotsList.tsx
-    │   │   └── PlotDetail.tsx
-    │   ├── App.tsx            # Global routing and layout
-    │   ├── index.css          # Tailwind config and theme
-    │   └── main.tsx           # React entry point
-    └── vite.config.ts         # Vite & Tailwind configuration
+    │   ├── admin/         # Admin isolated codebase
+    │   │   ├── layouts/   # Admin sidebar layout
+    │   │   └── pages/     # Dashboard, Users, Plots
+    │   ├── components/    # Reusable UI (Header, Footer, Form)
+    │   ├── context/       # Auth state management
+    │   └── pages/         # Public-facing pages
 ```
+
+---
+
+## ⚖️ License
+This project is for demonstration and commercial use. All rights reserved. © 2026 PlotBuddy.
