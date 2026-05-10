@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../api/config';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { MapPin, IndianRupee, Move, Loader2, Heart } from 'lucide-react';
@@ -18,7 +19,7 @@ export default function Favorites() {
 
     const fetchFavorites = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/users/me', {
+        const response = await axios.get(`${API_URL}/users/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (response.data.success) {

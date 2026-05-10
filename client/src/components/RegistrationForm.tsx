@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../api/config';
 import { MapPin, Image as ImageIcon, Home, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -34,7 +35,7 @@ export default function RegistrationForm({ onFormDataChange, onImageChange }: Re
 
   useEffect(() => {
     if (user?.role === 'administrator') {
-      axios.get('http://localhost:5001/api/admin/users', {
+      axios.get(`${API_URL}/admin/users`, {
         headers: { Authorization: `Bearer ${token}` }
       }).then(res => setUsers(res.data.data));
     }
@@ -132,7 +133,7 @@ export default function RegistrationForm({ onFormDataChange, onImageChange }: Re
     }
 
     try {
-      const response = await axios.post('http://localhost:5001/api/lands/register', submitData, {
+      const response = await axios.post(`${API_URL}/lands/register`, submitData, {
         headers: {
           Authorization: `Bearer ${token}`
         }

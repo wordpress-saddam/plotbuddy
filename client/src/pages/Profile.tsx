@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { API_URL } from '../api/config';
 import { useAuth } from '../context/AuthContext';
 import { User, Phone, MapPin, AlignLeft, Loader2, Save, CheckCircle2, Camera } from 'lucide-react';
 
@@ -37,7 +38,7 @@ export default function Profile() {
     setSuccess(false);
     
     try {
-      const response = await axios.put('http://localhost:5001/api/users/me', formData, {
+      const response = await axios.put(`${API_URL}/users/me`, formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -63,7 +64,7 @@ export default function Profile() {
 
     setPhotoLoading(true);
     try {
-      const response = await axios.post('http://localhost:5001/api/users/profile-photo', uploadData, {
+      const response = await axios.post(`${API_URL}/users/profile-photo`, uploadData, {
         headers: { 
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'

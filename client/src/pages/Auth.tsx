@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { API_URL } from '../api/config';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
@@ -34,7 +35,7 @@ export default function Auth() {
 
     try {
       if (isLogin) {
-        const response = await axios.post('http://localhost:5001/api/auth/login', {
+        const response = await axios.post(`${API_URL}/auth/login`, {
           email: formData.email,
           password: formData.password
         });
@@ -44,7 +45,7 @@ export default function Auth() {
           navigate(location.state?.from?.pathname || '/');
         }
       } else {
-        const response = await axios.post('http://localhost:5001/api/auth/register', formData);
+        const response = await axios.post(`${API_URL}/auth/register`, formData);
         
         if (response.data.success) {
           setSuccessMsg(response.data.message);
@@ -67,7 +68,7 @@ export default function Auth() {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://localhost:5001/api/auth/google', {
+      const response = await axios.post(`${API_URL}/auth/google`, {
         token: credentialResponse.credential
       });
 

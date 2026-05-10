@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { API_URL } from '../api/config';
 import { MapPin, Move, Loader2, Filter, Search } from 'lucide-react';
 import FavoriteButton from '../components/FavoriteButton';
 
@@ -25,7 +26,7 @@ export default function PlotsList() {
       if (water) params.append('water', 'true');
       if (electricity) params.append('electricity', 'true');
       
-      const response = await axios.get(`http://localhost:5001/api/lands?${params.toString()}`);
+      const response = await axios.get(`${API_URL}/lands?${params.toString()}`);
       if (response.data.success) {
         setPlots(response.data.data);
       }

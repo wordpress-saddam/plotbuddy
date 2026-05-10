@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../../api/config';
 import { useAuth } from '../../context/AuthContext';
 import AdminLayout from '../layouts/AdminLayout';
 import { 
@@ -30,8 +31,8 @@ export default function Dashboard() {
       // For now, we'll fetch all data and calculate stats on the frontend
       // In a real app, you'd have a dedicated /api/admin/stats endpoint
       const [usersRes, landsRes] = await Promise.all([
-        axios.get('http://localhost:5001/api/admin/users', { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get('http://localhost:5001/api/admin/lands', { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${API_URL}/admin/users`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${API_URL}/admin/lands`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
 
       const users = usersRes.data.data;

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { API_URL } from '../api/config';
 import { Heart, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -27,11 +28,11 @@ export default function FavoriteButton({ plotId, className = '', size = 24 }: Fa
     setLoading(true);
     try {
       if (isFavorite) {
-        await axios.delete(`http://localhost:5001/api/users/favorites/${plotId}`, {
+        await axios.delete(`${API_URL}/users/favorites/${plotId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        await axios.post(`http://localhost:5001/api/users/favorites/${plotId}`, {}, {
+        await axios.post(`${API_URL}/users/favorites/${plotId}`, {}, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }

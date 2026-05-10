@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../api/config';
 import { useAuth } from '../context/AuthContext';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MapPin, Loader2, Save, ArrowLeft, Image as ImageIcon } from 'lucide-react';
@@ -36,7 +37,7 @@ export default function EditPlot() {
   useEffect(() => {
     const fetchPlot = async () => {
       try {
-        const response = await axios.get(`http://localhost:5001/api/lands/${id}`);
+        const response = await axios.get(`${API_URL}/lands/${id}`);
         if (response.data.success) {
           const plot = response.data.data;
           
@@ -70,7 +71,7 @@ export default function EditPlot() {
 
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/admin/users', {
+        const response = await axios.get(`${API_URL}/admin/users`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (response.data.success) {
@@ -142,7 +143,7 @@ export default function EditPlot() {
     }
 
     try {
-      const response = await axios.put(`http://localhost:5001/api/lands/${id}`, submitData, {
+      const response = await axios.put(`${API_URL}/lands/${id}`, submitData, {
         headers: { 
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'

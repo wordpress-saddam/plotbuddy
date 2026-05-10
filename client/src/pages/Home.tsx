@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { API_URL } from '../api/config';
 import FavoriteButton from '../components/FavoriteButton';
 import { MapPin, IndianRupee, Move, ArrowRight, Loader2 } from 'lucide-react';
 
@@ -11,7 +12,7 @@ export default function Home() {
   useEffect(() => {
     const fetchRecentPlots = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/lands?limit=6');
+        const response = await axios.get(`${API_URL}/lands?limit=6`);
         if (response.data.success) {
           setRecentPlots(response.data.data);
         }

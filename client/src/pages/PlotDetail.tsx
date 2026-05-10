@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../api/config';
 import { useParams, Link } from 'react-router-dom';
 import { MapPin, IndianRupee, Move, Loader2, ArrowLeft, Check, LayoutGrid, Zap, Droplet, CheckCircle2 } from 'lucide-react';
 import FavoriteButton from '../components/FavoriteButton';
@@ -13,7 +14,7 @@ export default function PlotDetail() {
   useEffect(() => {
     const fetchPlot = async () => {
       try {
-        const response = await axios.get(`http://localhost:5001/api/lands/${id}`);
+        const response = await axios.get(`${API_URL}/lands/${id}`);
         if (response.data.success) {
           setPlot(response.data.data);
         }

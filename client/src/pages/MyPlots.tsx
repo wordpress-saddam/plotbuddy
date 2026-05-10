@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../api/config';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { MapPin, IndianRupee, Move, Loader2, CheckCircle2, Circle, Edit2, Trash2 } from 'lucide-react';
@@ -18,7 +19,7 @@ export default function MyPlots() {
 
     const fetchMyPlots = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/lands/my-plots', {
+        const response = await axios.get(`${API_URL}/lands/my-plots`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (response.data.success) {
@@ -37,7 +38,7 @@ export default function MyPlots() {
   const handleToggleBooked = async (plotId: string) => {
     setTogglingId(plotId);
     try {
-      const response = await axios.put(`http://localhost:5001/api/lands/${plotId}/toggle-booked`, {}, {
+      const response = await axios.put(`${API_URL}/lands/${plotId}/toggle-booked`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -59,7 +60,7 @@ export default function MyPlots() {
       return;
     }
     try {
-      const response = await axios.delete(`http://localhost:5001/api/lands/${plotId}`, {
+      const response = await axios.delete(`${API_URL}/lands/${plotId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../../api/config';
 import { useAuth } from '../../context/AuthContext';
 import AdminLayout from '../layouts/AdminLayout';
 import { Link } from 'react-router-dom';
@@ -23,7 +24,7 @@ export default function Plots() {
   const fetchLands = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:5001/api/admin/lands', {
+      const res = await axios.get(`${API_URL}/admin/lands`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setLands(res.data.data);
@@ -40,7 +41,7 @@ export default function Plots() {
 
   const handleTogglePlotPublish = async (id: string) => {
     try {
-      await axios.put(`http://localhost:5001/api/admin/lands/${id}/toggle-publish`, {}, {
+      await axios.put(`${API_URL}/admin/lands/${id}/toggle-publish`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchLands();
@@ -52,7 +53,7 @@ export default function Plots() {
   const handleDeletePlot = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this plot?')) {
       try {
-        await axios.delete(`http://localhost:5001/api/lands/${id}`, {
+        await axios.delete(`${API_URL}/lands/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         fetchLands();

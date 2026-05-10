@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../../api/config';
 import { useAuth } from '../../context/AuthContext';
 import AdminLayout from '../layouts/AdminLayout';
 import { 
@@ -31,7 +32,7 @@ export default function Users() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:5001/api/admin/users', {
+      const res = await axios.get(`${API_URL}/admin/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUsers(res.data.data);
@@ -48,7 +49,7 @@ export default function Users() {
 
   const handleToggleUserStatus = async (id: string) => {
     try {
-      await axios.put(`http://localhost:5001/api/admin/users/${id}/toggle-status`, {}, {
+      await axios.put(`${API_URL}/admin/users/${id}/toggle-status`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchUsers();
@@ -60,7 +61,7 @@ export default function Users() {
   const handleDeleteUser = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        await axios.delete(`http://localhost:5001/api/admin/users/${id}`, {
+        await axios.delete(`${API_URL}/admin/users/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         fetchUsers();
@@ -95,11 +96,11 @@ export default function Users() {
     e.preventDefault();
     try {
       if (editingUser) {
-        await axios.put(`http://localhost:5001/api/admin/users/${editingUser._id}`, userFormData, {
+        await axios.put(`${API_URL}/admin/users/${editingUser._id}`, userFormData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        await axios.post('http://localhost:5001/api/admin/users', userFormData, {
+        await axios.post(`${API_URL}/admin/users`, userFormData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
