@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import AdminLayout from '../layouts/AdminLayout';
@@ -71,6 +71,16 @@ export default function Dashboard() {
     { label: 'Active Listings', value: stats.activePlots, icon: TrendingUp, color: 'bg-orange-500', trend: `${Math.round((stats.activePlots / stats.totalPlots) * 100) || 0}% of total` },
     { label: 'Platform Growth', value: '12%', icon: ArrowUpRight, color: 'bg-purple-500', trend: 'This month' },
   ];
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>

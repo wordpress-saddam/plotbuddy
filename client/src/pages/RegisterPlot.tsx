@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import RegistrationForm from '../components/RegistrationForm';
 import PreviewCard from '../components/PreviewCard';
 import { useAuth } from '../context/AuthContext';
-import { MapPin } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import Login from '../components/Login';
 
 export default function RegisterPlot() {

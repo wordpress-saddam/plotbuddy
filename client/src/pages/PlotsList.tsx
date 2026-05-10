@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { MapPin, IndianRupee, Move, Loader2, Filter, Search } from 'lucide-react';
+import { MapPin, Move, Loader2, Filter, Search } from 'lucide-react';
 import FavoriteButton from '../components/FavoriteButton';
 
 export default function PlotsList() {

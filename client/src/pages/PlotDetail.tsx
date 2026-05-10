@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
 import { MapPin, IndianRupee, Move, Loader2, ArrowLeft, Check, LayoutGrid, Zap, Droplet, CheckCircle2 } from 'lucide-react';

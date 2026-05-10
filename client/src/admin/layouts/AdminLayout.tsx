@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -6,14 +6,13 @@ import {
   Map, 
   LogOut, 
   Home, 
-  Settings,
   ChevronRight,
   ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 interface AdminLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {

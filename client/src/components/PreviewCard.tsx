@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { MapPin, IndianRupee, Zap, Droplet, Move, LayoutGrid } from 'lucide-react';
 
 interface PreviewCardProps {

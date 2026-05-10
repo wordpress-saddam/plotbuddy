@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { Map, MapPin, LogOut, Heart, User, PlusCircle, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
